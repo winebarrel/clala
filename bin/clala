@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+'use strict';
+
+var Clala = require('../index.js');
+new Clala.Client().repl()
