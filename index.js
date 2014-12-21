@@ -3,8 +3,7 @@
 var Clala = {
   Client:   require('./lib/client'),
   evaluate: require('./lib/evaluate'),
-  Parser:   require('./lib/parser'),
-  Symbol:   require('./lib/symbol')
+  Parser:   require('./lib/parser')
 };
 
 module.exports = Clala;
