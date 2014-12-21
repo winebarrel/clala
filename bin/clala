@@ -1,5 +1,21 @@
 #!/usr/bin/env node
 'use strict';
-
 var Clala = require('../index.js');
-new Clala.Client().repl()
+var fs = require('fs');
+
+var files = process.argv.slice(2);
+var client = new Clala.Client();
+
+if (files.length == 0) {
+  client.repl();
+} else {
+  files.forEach(function(file) {
+    fs.readFile(file, 'utf8', function (err, text) {
+      if (err) { throw err }
+
+      client.parse(text).forEach(function(list) {
+        client.evaluate(list);
+      });
+    });
+  });
+}
