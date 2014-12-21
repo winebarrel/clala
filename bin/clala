@@ -28,11 +28,7 @@ if (!file) {
 }
 
 process.on('uncaughtException', function(err) {
-  console.log(err);
-
-  if (err.stack) {
-    console.log(err.stack);
-  }
+  console.log(e.stack ? e.stack : e);
 
   Clala.Lambda.cleanup(function() {
     process.exit(1);
