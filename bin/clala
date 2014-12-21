@@ -6,20 +6,35 @@ var fs = require('fs');
 var file = process.argv[2];
 var client = new Clala.Client();
 
+Clala.Lambda.init({
+  region: process.env.CLALA_REGION,
+  Role: process.env.CLALA_ROLE,
+  QueueUrl: process.env.CLALA_QUEUE_URL
+});
+
 if (!file) {
   client.repl();
 } else {
-  fs.readFile(file, 'utf8', function (err, text) {
-    if (err) { throw err }
+  var content = fs.readFileSync(file, 'utf8');
+  var parsed = client.parse(content.toString());
 
-    var parsed = client.parse(text);
+  if (!(parsed instanceof Array)) {
+    parsed = [parsed];
+  }
 
-    if (!(parsed instanceof Array)) {
-      parsed = [parsed];
-    }
-
-    for (var i = 0; i < parsed.length; i++) {
-      Clala.evaluate(parsed[i], client.global_env);
-    }
-  });
+  for (var i = 0; i < parsed.length; i++) {
+    Clala.evaluate(parsed[i], client.global_env);
+  }
 }
+
+process.on('uncaughtException', function(err) {
+  console.log(err);
+
+  if (err.stack) {
+    console.log(err.stack);
+  }
+
+  Clala.Lambda.cleanup(function() {
+    process.exit(1);
+  });
+})
