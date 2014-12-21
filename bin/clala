@@ -14,7 +14,7 @@ if (files.length == 0) {
       if (err) { throw err }
 
       client.parse(text).forEach(function(list) {
-        client.evaluate(list);
+        Clala.evaluate(list, client.global_env);
       });
     });
   });
