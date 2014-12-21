@@ -3,19 +3,23 @@
 var Clala = require('../index.js');
 var fs = require('fs');
 
-var files = process.argv.slice(2);
+var file = process.argv[2];
 var client = new Clala.Client();
 
-if (files.length == 0) {
+if (!file) {
   client.repl();
 } else {
-  files.forEach(function(file) {
-    fs.readFile(file, 'utf8', function (err, text) {
-      if (err) { throw err }
+  fs.readFile(file, 'utf8', function (err, text) {
+    if (err) { throw err }
 
-      client.parse(text).forEach(function(list) {
-        Clala.evaluate(list, client.global_env);
-      });
-    });
+    var parsed = client.parse(text);
+
+    if (!(parsed instanceof Array)) {
+      parsed = [parsed];
+    }
+
+    for (var i = 0; i < parsed.length; i++) {
+      Clala.evaluate(parsed[i], client.global_env);
+    }
   });
 }
